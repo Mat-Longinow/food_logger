@@ -2,31 +2,32 @@ const mongoose = require('mongoose');
 
 const memberSchema = mongoose.Schema({
   name: String,
-  records: [
+  weekRecords: [
     {
-    	dates: {
-        	beginning: Date,
-          	end: Date
+    	week: {
+        	beginning: String,
+          	end: String
         },
-      	records: [
+      	dayRecords: [
           {
-          	date: Date,
+          	date: String,
             meals: [
               {
               	time: String,
                 totalMealMetrics: {
-                	calories: Number,
-                  	fat: Number,
-                  	carbs: Number,
-                  	protein: Number
+                    calories: Number,
+                    fat: Number,
+                    carbs: Number,
+                    protein: Number
                 },
                 foodItems: [
                   {
-                  	name: String,
-                	  calories: Number,
-                  	fat: Number,
-                  	carbs: Number,
-                  	protein: Number
+                    name: String,
+                    amount: String,
+                    calories: Number,
+                    fat: Number,
+                    carbs: Number,
+                    protein: Number
                   }
                 ]
               }
@@ -37,4 +38,5 @@ const memberSchema = mongoose.Schema({
   ]
 });
 
-module.exports = mongoose.model('Member', memberSchema);
+// this tells which collection within your database to be looking in
+module.exports = mongoose.model('Model', memberSchema, 'foodLoggerCollection');

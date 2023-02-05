@@ -1,9 +1,15 @@
 import React from 'react';
 import './App.css';
 import Timeline from "./components/Timeline";
+import axios from "axios";
+import Sidebar from "./components/Sidebar";
 
 function App() {
 
+  axios.get('http://localhost:5010/')
+      .then((res) => {
+        console.log('got this from the server --> ', res)
+      })
   const generateTimelines = () => {
     let timelines: any = []
     let days: string[] = [
@@ -34,7 +40,7 @@ function App() {
   return (
     <div id="App" className="flex">
       <aside className="h-screen sticky top-0 left-0 basis-1/6">
-        1/4
+        <Sidebar />
       </aside>
 
       <main className="overflow-x-scroll overflow-y-auto flex basis-5/6">
