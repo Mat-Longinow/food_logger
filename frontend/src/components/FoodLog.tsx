@@ -14,6 +14,8 @@ const FoodItem = ({record}: FoodItemProps) => {
 		protein
 	} = record
 
+	console.log('this is what is comin in to the FoodItem -->', record)
+
 	return (
 		<div className="bg-white mt-3 rounded-lg p-3">
 			<div className="meal-title">

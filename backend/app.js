@@ -26,6 +26,15 @@ db.once('open', () => {
 	console.log('looks like we are kissing the golden (mon)goose!');
 });
 
+const getTime = () => {
+	const time = new Date();
+	const hour = time.getHours();
+	const minute = time.getMinutes();
+	const seconds = time.getSeconds();
+
+	return `[${hour}:${minute}:${seconds}]`;
+};
+
 index.get('/', (req, res) => {
 	res.send('Hello World!')
 })
@@ -43,14 +52,61 @@ index.post('/getWeekInfo', (req, initialRes) =>  {
 
 	const { name, week: incomingWeek } = req.body
 
-	Member.find({name: name}, (err, findRes) => {
+	Member.find({name: 'Mat Longinow'}, (err, findRes) => {
 		if(err) {
-			console.log('getWeekInfo err -->', err);
+			console.log(`${getTime()} getWeekInfo err -->`, err);
 		}
 
-		initialRes.send(findRes);
+		console.log(`${getTime()} getWeekInfo Res --> `, findRes)
+		console.log(`${getTime()} incomingWeek --> `, incomingWeek)
+
+		const weekData = findRes[0].weekRecords.filter((week) => week.week = incomingWeek)
+
+		initialRes.send({weekData: weekData, allData: findRes});
 	});
 })
+
+index.put('/addMealItem', async (req, initialRes) => {
+	const {
+		weekId,
+		dayId,
+		mealTime,
+		foodItems
+	} = req.body;
+
+	const newFoodItem = {
+		dayId: dayId,
+		mealTime: mealTime,
+		foodItems: foodItems
+	};
+
+	await Member.find({name: 'Mat Longinow'}, (err, findRes) => {
+		if (err) {
+			console.log(`${getTime()} getWeekInfo err -->`, err);
+		}
+
+		const weekData = findRes[0].weekRecords.filter((week) => week._id = weekId)
+
+		const dayData = weekData[0].dayRecords.filter((day) => day._id = dayId)
+
+		const mealData = dayData[0].meals.filter((meal) => meal.time = mealTime)
+
+		if(mealData.length > 0) {
+			initialRes.send("Sorry, that meal time is already being used!")
+		} else {
+
+			dayData.
+
+
+			findRes.save().then(() => {
+				initialRes.send("Saved the meal!!!")
+			})
+		}
+
+		initialRes.send(dayData)
+
+	})
+});
 
 index.post('/getWeekDates', (req, initialRes) =>  {
 
@@ -61,7 +117,7 @@ index.post('/getWeekDates', (req, initialRes) =>  {
 
 	Member.find({}, (err, findRes) => {
 		if(err) {
-			console.log('getWeekDates err -->', err);
+			console.log(`${getTime()} getWeekDates err -->`, err);
 		}
 
 		const weekDates = []

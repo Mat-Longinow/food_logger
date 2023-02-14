@@ -3,18 +3,10 @@ import axios from "axios";
 import { format } from 'date-fns'
 
 interface SidebarProps {
+    setActiveDates: any
 }
 
-const Sidebar = ({}: SidebarProps) => {
-    // axios.post('http://localhost:5010/getWeekInfo', {
-    //     name: 'Mat Longinow',
-    //     week: {
-    //         beginning: 'February 3rd, 2023',
-    //         end: 'February 9th, 2023'
-    //     }
-    // }).then((res) => {
-    //         console.log('here is the data back --> ', res)
-    //     })
+const Sidebar = ({ setActiveDates }: SidebarProps) => {
     const [weekDates, setWeekDates] = useState<any>()
 
     useEffect(() => {
@@ -25,14 +17,17 @@ const Sidebar = ({}: SidebarProps) => {
         })
     }, [])
 
-    console.log('weekDates -->', weekDates)
+    const handleClick = (week: any) => {
+        console.log('you hit the handleClick!')
+        setActiveDates(week)
+    }
 
     return (
         <div className="flex items-start mt-12">
             <ul className="nav nav-tabs flex flex-col flex-wrap list-none border-b-0 pl-0 w-full" id="tabs-tabVertical"
                 role="tablist">
                 {weekDates && weekDates.map((week: any) => (
-                    <li className="nav-item flex-grow text-center" role="presentation">
+                    <li className="nav-item flex-grow text-center" role="presentation" onClick={() => handleClick(week)}>
                         <a
                             href="#tabs-homeVertical"
                             className="nav-link block font-medium text-xs leading-tight uppercase border-x-0 border-t-0
@@ -44,7 +39,7 @@ const Sidebar = ({}: SidebarProps) => {
                             role="tab"
                             aria-controls="tabs-homeVertical"
                             aria-selected="true"
-                        >{format(new Date(week.beginning), 'MM/dd/yy')} - {week.end}</a>
+                        >{format(new Date(week.beginning), 'MM/dd/yy')} - {format(new Date(week.end), 'MM/dd/yy')}</a>
                     </li>
                 ))}
             </ul>

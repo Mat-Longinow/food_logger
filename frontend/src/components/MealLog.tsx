@@ -3,6 +3,7 @@ import { FoodItem } from "./FoodLog";
 import {foodItem} from "./types/types";
 
 interface MealLogProps {
+	record: any
 }
 
 const meal: foodItem[] = [
@@ -40,10 +41,12 @@ const calculateTotalMealMetrics = () => {
 
 calculateTotalMealMetrics()
 
-const MealLog = () => {
+const MealLog = ({ record: meals }: MealLogProps) => {
+	console.log('here is what is coming into the MealLog --> ', meals)
+
 	return (
 		<div className="w-80">
-			{meal.map((record, key) => <FoodItem key={key} record={record}/>)}
+			{meals[0].foodItems.map((record: any, key: any) => <FoodItem key={key} record={record}/>)}
 		</div>
 	);
 };
