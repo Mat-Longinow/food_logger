@@ -1,11 +1,22 @@
 import { MealLog } from "./MealLog";
-import {useEffect, useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
+import {foodItem} from "./types/types";
 
 interface TimelineProps {
 	day: any
 	className: any
-	weekData: any
+	dayData: any
 }
+
+const getTime = () => {
+	const time = new Date();
+	const hour = time.getHours();
+	const minute = time.getMinutes();
+	const seconds = time.getSeconds();
+	const milliseconds = time.getMilliseconds()
+
+	return `[${hour}:${minute}:${seconds}:${milliseconds}]`;
+};
 
 const generateTimeLineItems: any = (record: any) => {
 	const timelineItemsArray = []
@@ -19,9 +30,11 @@ const generateTimeLineItems: any = (record: any) => {
 			amPM = "PM"
 		}
 
-		const time = `${hour} ${amPM}`
+		let time = `${hour} ${amPM}`
 
-		console.log('generateTimelineItems record --> ', {record: record, time: time})
+		if (time === '12 AM') {
+			time = '12 PM'
+		}
 
 		const getTimeSpecificMealRecord = (record: any) => {
 			const timeSpecificMeal = record[0].meals.filter((meal: any) => meal.time === time)
@@ -34,7 +47,6 @@ const generateTimeLineItems: any = (record: any) => {
 
 		timelineItemsArray.push({
 			time: time,
-			// record: timeLineItemRecord.length > 1 ? record : {}
 			record: record.length > 0 ? getTimeSpecificMealRecord(record) : ""
 		})
 	}
@@ -42,45 +54,115 @@ const generateTimeLineItems: any = (record: any) => {
 	return timelineItemsArray
 }
 
-const Timeline = ({ day, className, weekData }: TimelineProps) => {
-	console.log('timeline props --> ', {
-		day: day,
-		className: className,
-		weekData: weekData
-	})
-
+const Timeline = ({ day, className, dayData }: TimelineProps) => {
 	const [timelineItems, setTimelineItems] = useState<any>([])
+	const [totalDayMetrics, setTotalDayMetrics] = useState({
+		calories: 0,
+		fat: 0,
+		carbs: 0,
+		protein: 0,
+		sodium: 0
+	})
+	const [allMealMetrics, setAllMealMetrics] = useState([])
+	const [mealMetricsIsDone, setMealMetricsIsDone] = useState(false)
+	const totalDayMetricsStyling = 'text-black text-xl'
+	const [doneWithCalc, setDoneWithCalc] = useState(false)
 
-	const getTodaysRecords = () => {
-		if(weekData.length > 0) {
-			return weekData[0].dayRecords.filter((dayData: any) => {
-				console.log('inside the filter loop -->', {
-					dayData: dayData,
-					dayDataDate: dayData.date,
-					dayDate: day.date,
-					isEqual: dayData.date === day.date
-				})
-				return dayData.date === day.date
+	const pushToAllMealMetrics = async (totalMealMetric: any) => {
+		if(allMealMetrics.filter((meal: any) => meal.time === totalMealMetric.time).length === 0 && totalMealMetric.time) {
+			console.log(`${dayData[0].date} ${getTime()}: pushToAllMealMetrics inside filter --> `, totalMealMetric)
+			const setToAllMealMetrics = async () => {
+				const newAllMealMetrics: any = allMealMetrics
+
+				newAllMealMetrics.push(totalMealMetric)
+
+				await setAllMealMetrics(newAllMealMetrics)
+			}
+
+			await setToAllMealMetrics()
+
+			console.log(`${dayData[0].date} ${getTime()}: after the pushToAllMealMetrics is done --> `, {
+				allMealMetrics: allMealMetrics,
+				todaysRecords: dayData[0]
 			})
+
+			if(allMealMetrics.length === dayData[0]?.meals.length) {
+				setMealMetricsIsDone(true)
+			}
 		}
 	}
 
-	useEffect(() => {
-		console.log('weekData has changed 💪🏻')
-		setTimelineItems(generateTimeLineItems(getTodaysRecords()))
-	}, [weekData])
+	const calculateTotalDayMetrics = async () => {
+		const dayMetrics = totalDayMetrics
 
-	if(weekData.length < 1){
-		return <div className="bg-mild-gray h-full w-full"> </div>
+		await allMealMetrics.forEach((meal) => {
+			dayMetrics["calories"] = dayMetrics["calories"] + meal["calories"]
+			dayMetrics["fat"] = dayMetrics["fat"] + meal["fat"]
+			dayMetrics["carbs"] = dayMetrics["carbs"] + meal["carbs"]
+			dayMetrics["protein"] = dayMetrics["protein"] + meal["protein"]
+			dayMetrics["sodium"] = dayMetrics["sodium"] + meal["sodium"]
+		})
+
+		setTotalDayMetrics(dayMetrics)
+		setDoneWithCalc(true)
 	}
+
+	useEffect(() => {
+		setTimelineItems(generateTimeLineItems(dayData))
+
+		if(dayData[0]?.date === '02/17/23') {
+			console.log(`${dayData[0]?.date} ${getTime()}: inside the useEffect --> `, {
+				allMealMetrics: allMealMetrics,
+				dayData: dayData,
+				doneWithCalc: doneWithCalc,
+				mealMetricsIsDone: mealMetricsIsDone
+			})
+		}
+
+		if(dayData[0] && allMealMetrics.length === dayData[0]?.meals.length && !doneWithCalc) {
+			console.log(`${dayData[0].date} ${getTime()}: running the calc now 👍🏻`)
+			// setTimeout(() => calculateTotalDayMetrics(), 15)
+			calculateTotalDayMetrics()
+		}
+
+	}, [dayData, allMealMetrics, mealMetricsIsDone])
+
+	// useEffect(() => {
+	// 	const justMeals = allMealMetrics.filter((meal: any) => meal.time)
+	//
+	// 	console.log('inside the useEffect --> ', {
+	// 		justMeals: justMeals,
+	// 		allMealMetrics: allMealMetrics
+	// 	})
+	//
+	// 	if(justMeals.length === todaysRecords[0]?.meals.length && runTotalDayCalc) {
+	// 		calculateTotalDayMetrics()
+	// 		setRunTotalDayCalc(false)
+	// 	}
+	// }, [allMealMetrics])
 
 
 	return (
 		<div className={`flex flex-nowrap pl-24 basis-1/7 bg-mild-gray ` + className}>
 			<ol className="relative border-l border-gray-200 dark:border-gray-200 pt-12 mr-5">
-				<h1 className="text-4xl rounded-full pt-1 pb-1 pr-3 pl-3 text-center ml-[75px] mb-20 font-bold text-gray-600">
+				<h1 className="text-4xl rounded-full pt-1 pb-1 pr-3 pl-3 text-center ml-[75px] mb-9 font-bold text-gray-600">
 					{ day.day }
 				</h1>
+
+				{totalDayMetrics.calories > 0 && (
+					<div className="text-xs text-gray-400 flex justify-between bg-white mb-16 ml-12 -mr-6 rounded-lg p-3 right-3">
+						<p className="pr-12"><span className={totalDayMetricsStyling}>{totalDayMetrics.calories}</span> Calories</p>
+
+						<p><span className={totalDayMetricsStyling}>{totalDayMetrics.fat}</span> Fat</p>
+
+						<p><span className={totalDayMetricsStyling}>{totalDayMetrics.carbs}</span> Carbs</p>
+
+						<p><span className={totalDayMetricsStyling}>{totalDayMetrics.protein}</span> Protein</p>
+
+						<p><span className={totalDayMetricsStyling}>{totalDayMetrics.sodium}</span> Sodium</p>
+					</div>
+				)}
+
 
 				{timelineItems.map(({ time, record }: {time: any, record: any}, key: any) => (
 					<li key={key} className="mb-10 ml-6 ml-20 min-h-[25px]">
@@ -90,7 +172,12 @@ const Timeline = ({ day, className, weekData }: TimelineProps) => {
 						</span>
 
 						{record ? (
-							<MealLog record={record}/>
+							<MealLog
+								allMealMetrics={allMealMetrics}
+								setAllMealMetrics={setAllMealMetrics}
+								record={record}
+								pushToAllMealMetrics={pushToAllMealMetrics}
+							/>
 						): (
 							<div> </div>
 						)}

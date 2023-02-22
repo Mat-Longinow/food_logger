@@ -3,7 +3,8 @@ import axios from "axios";
 import { format } from 'date-fns'
 
 interface SidebarProps {
-    setActiveDates: any
+    setActiveDates: any,
+
 }
 
 const Sidebar = ({ setActiveDates }: SidebarProps) => {
@@ -14,11 +15,13 @@ const Sidebar = ({ setActiveDates }: SidebarProps) => {
             name: 'Mat Longinow',
         }).then((res) => {
             setWeekDates(res.data)
+
+            // set first item as the default one shown
+            setActiveDates(res.data[0])
         })
     }, [])
 
     const handleClick = (week: any) => {
-        console.log('you hit the handleClick!')
         setActiveDates(week)
     }
 

@@ -4,5 +4,6 @@ export type foodItem = {
 	calories: number,
 	fat: number,
 	carbs: number,
-	protein: number
+	protein: number,
+	sodium: number
 }

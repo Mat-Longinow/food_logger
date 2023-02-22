@@ -8,18 +8,18 @@ const FoodItem = ({record}: FoodItemProps) => {
 
 	const {
 		name,
+		amount,
 		calories,
 		fat,
 		carbs,
-		protein
+		protein,
+		sodium
 	} = record
-
-	console.log('this is what is comin in to the FoodItem -->', record)
 
 	return (
 		<div className="bg-white mt-3 rounded-lg p-3">
 			<div className="meal-title">
-				<h3 className="font-bold pb-2">{name}</h3>
+				<h3 className="font-bold pb-2">{name} <span className="text-sm text-gray-400 font-light pl-1">({amount})</span></h3>
 			</div>
 
 			<div className="meal-metrics text-sm text-gray-400 flex justify-between">
@@ -30,6 +30,8 @@ const FoodItem = ({record}: FoodItemProps) => {
 				<p>{carbs} C</p>
 
 				<p>{protein} P</p>
+
+				<p>{sodium} S</p>
 			</div>
 		</div>
 	);

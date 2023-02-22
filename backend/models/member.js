@@ -27,7 +27,8 @@ const memberSchema = mongoose.Schema({
                     calories: Number,
                     fat: Number,
                     carbs: Number,
-                    protein: Number
+                    protein: Number,
+                    sodium: Number
                   }
                 ]
               }

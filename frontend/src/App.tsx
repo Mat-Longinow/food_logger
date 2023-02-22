@@ -7,8 +7,8 @@ import { add, format } from "date-fns";
 
 function App() {
   const defaultActiveDates = {
-    beginning: '02/03/2023',
-    end: '02/09/2023'
+    beginning: '02/17/2023',
+    end: '02/23/2023'
   }
 
   const [activeDates, setActiveDates] = useState<any>(defaultActiveDates)
@@ -17,7 +17,11 @@ function App() {
 
   const formatDate = (date: any) => format(new Date(date), 'MM/dd/yy')
 
-  const addToDate = (date: any, daysToAdd: number) => add(new Date(date), {days: daysToAdd})
+  const addToDate = (date: any, daysToAdd: number) => {
+    let newDate = add(new Date(date), {days: daysToAdd})
+
+    return formatDate(newDate)
+  }
 
   const getWeekInfo = () => {
     axios.post('http://localhost:5010/getWeekInfo', {
@@ -27,7 +31,6 @@ function App() {
         end: activeDates.end
       }
     }).then((res) => {
-      console.log('here is the full getWeekInfo --> ', res)
       setWeekData(res.data.weekData)
       setUserId(res.data)
     })
@@ -50,42 +53,44 @@ function App() {
       },
       {
         day: "Saturday",
-        date: addToDate(activeDates, 1)
+        date: addToDate(activeDates.beginning, 1)
       },
       {
         day: "Sunday",
-        date: addToDate(activeDates, 2)
+        date: addToDate(activeDates.beginning, 2)
       },
       {
         day: "Monday",
-        date: addToDate(activeDates, 3)
+        date: addToDate(activeDates.beginning, 3)
       },
       {
         day: "Tuesday",
-        date: addToDate(activeDates, 4)
+        date: addToDate(activeDates.beginning, 4)
       },
       {
         day: "Wednesday",
-        date: addToDate(activeDates, 5)
+        date: addToDate(activeDates.beginning, 5)
       },
       {
         day: "Thursday",
-        date: addToDate(activeDates, 6)
+        date: addToDate(activeDates.beginning, 6)
       },
     ]
 
     if(weekData) {
-      for (let i = 0; i < 7; i++) {
-        if (i === 6) {
+      days.forEach((day: any) => {
+        const dayData = weekData[0].dayRecords.filter((dayRecord: any) => dayRecord.date === day.date)
+
+        if (day.day === 'Thursday') {
           timelines.push(
-              <Timeline className="pr-20" day={days[i]} weekData={weekData}/>
+              <Timeline className="pr-20" day={day} dayData={dayData}/>
           )
         } else {
           timelines.push(
-              <Timeline className="" day={days[i]} weekData={weekData}/>
+              <Timeline className="" day={day} dayData={dayData}/>
           )
         }
-      }
+      })
     }
 
     return timelines

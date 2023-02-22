@@ -1,51 +1,69 @@
-import React from 'react';
-import { FoodItem } from "./FoodLog";
-import {foodItem} from "./types/types";
+import React, { useEffect, useState } from 'react'
+import { FoodItem } from "./FoodItem"
+import { foodItem } from "./types/types"
 
 interface MealLogProps {
-	record: any
+	record: any,
+	allMealMetrics: any,
+	setAllMealMetrics: any,
+	pushToAllMealMetrics: any
 }
 
-const meal: foodItem[] = [
-	{
-		name: 'item1',
-		calories: 157,
-		fat: 45,
-		carbs: 45,
-		protein: 45
-	},
-	{
-		name: 'item2',
-		calories: 356,
-		fat: 47,
-		carbs: 68,
-		protein: 35
-	}
-]
-
-const totalMealMetrics = {
-	calories: 0,
-	fat: 0,
-	carbs: 0,
-	protein: 0
-}
-
-const calculateTotalMealMetrics = () => {
-	meal.forEach((foodItem) => {
-		totalMealMetrics["calories"] = totalMealMetrics["calories"] + foodItem["calories"]
-		totalMealMetrics["fat"] = totalMealMetrics["fat"] + foodItem["fat"]
-		totalMealMetrics["carbs"] = totalMealMetrics["carbs"] + foodItem["carbs"]
-		totalMealMetrics["protein"] = totalMealMetrics["protein"] + foodItem["protein"]
+const MealLog = ({ record: meals, allMealMetrics, setAllMealMetrics, pushToAllMealMetrics }: MealLogProps) => {
+	const [totalMealMetrics, setTotalMealMetrics] = useState({
+		time: "",
+		calories: 0,
+		fat: 0,
+		carbs: 0,
+		protein: 0,
+		sodium: 0
 	})
-}
 
-calculateTotalMealMetrics()
+	const calculateTotalMealMetrics = async (meal: foodItem[]) => {
+		const mealMetrics = {
+			time: meals[0].time,
+			calories: 0,
+			fat: 0,
+			carbs: 0,
+			protein: 0,
+			sodium: 0
+		}
 
-const MealLog = ({ record: meals }: MealLogProps) => {
-	console.log('here is what is coming into the MealLog --> ', meals)
+		await meal.forEach((foodItem: any) => {
+			mealMetrics["calories"] = mealMetrics["calories"] + foodItem["calories"]
+			mealMetrics["fat"] = mealMetrics["fat"] + foodItem["fat"]
+			mealMetrics["carbs"] = mealMetrics["carbs"] + foodItem["carbs"]
+			mealMetrics["protein"] = mealMetrics["protein"] + foodItem["protein"]
+			mealMetrics["sodium"] = mealMetrics["sodium"] + foodItem["sodium"]
+		})
+
+		setTotalMealMetrics(mealMetrics)
+
+		pushToAllMealMetrics(totalMealMetrics)
+	}
+
+	useEffect(() => {
+		if(meals[0].foodItems) {
+			calculateTotalMealMetrics(meals[0].foodItems)
+		}
+	}, [meals])
+
+	const totalMealMetricCSS = 'rounded-full pl-2 pr-2 pt-1 pb-1 bg-gray-200'
 
 	return (
 		<div className="w-80">
+			<div className="text-gray-500 flex justify-between pl-1 pr-1 text-gray-600 text-sm">
+				<p className="">{totalMealMetrics.calories} <span className={totalMealMetricCSS}>Cal</span></p>
+
+				<p>{totalMealMetrics.fat} <span className={totalMealMetricCSS}>F</span></p>
+
+				<p>{totalMealMetrics.carbs} <span className={totalMealMetricCSS}>C</span></p>
+
+				<p>{totalMealMetrics.protein} <span className={totalMealMetricCSS}>P</span></p>
+
+				<p>{totalMealMetrics.sodium} <span className={totalMealMetricCSS}>S</span></p>
+			</div>
+
 			{meals[0].foodItems.map((record: any, key: any) => <FoodItem key={key} record={record}/>)}
 		</div>
 	);
