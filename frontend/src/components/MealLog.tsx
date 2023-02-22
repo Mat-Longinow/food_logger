@@ -53,7 +53,7 @@ const MealLog = ({ record: meals, allMealMetrics, setAllMealMetrics, pushToAllMe
 	return (
 		<div className="w-80">
 			<div className="text-gray-500 flex justify-between pl-1 pr-1 text-gray-600 text-sm">
-				<p className="">{totalMealMetrics.calories} <span className={totalMealMetricCSS}>Cal</span></p>
+				<p>{totalMealMetrics.calories} <span className={totalMealMetricCSS}>Cal</span></p>
 
 				<p>{totalMealMetrics.fat} <span className={totalMealMetricCSS}>F</span></p>
 

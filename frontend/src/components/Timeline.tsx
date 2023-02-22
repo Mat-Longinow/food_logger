@@ -127,21 +127,6 @@ const Timeline = ({ day, className, dayData }: TimelineProps) => {
 
 	}, [dayData, allMealMetrics, mealMetricsIsDone])
 
-	// useEffect(() => {
-	// 	const justMeals = allMealMetrics.filter((meal: any) => meal.time)
-	//
-	// 	console.log('inside the useEffect --> ', {
-	// 		justMeals: justMeals,
-	// 		allMealMetrics: allMealMetrics
-	// 	})
-	//
-	// 	if(justMeals.length === todaysRecords[0]?.meals.length && runTotalDayCalc) {
-	// 		calculateTotalDayMetrics()
-	// 		setRunTotalDayCalc(false)
-	// 	}
-	// }, [allMealMetrics])
-
-
 	return (
 		<div className={`flex flex-nowrap pl-24 basis-1/7 bg-mild-gray ` + className}>
 			<ol className="relative border-l border-gray-200 dark:border-gray-200 pt-12 mr-5">

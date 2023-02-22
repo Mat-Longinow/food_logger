@@ -23,6 +23,7 @@ const memberSchema = mongoose.Schema({
                 foodItems: [
                   {
                     name: String,
+                    icon: String,
                     amount: String,
                     calories: Number,
                     fat: Number,
