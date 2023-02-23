@@ -48,7 +48,6 @@ index.post('/getWeekInfo', (req, initialRes) =>  {
 	//  	beginning: ''
 	//		end: ''
 	//	},
-	//  day: ''
 	//
 
 	const { name, week: incomingWeek } = req.body

@@ -24,7 +24,7 @@ function App() {
   }
 
   const getWeekInfo = () => {
-    axios.post('http://localhost:5010/getWeekInfo', {
+    axios.post('https://food-logger-backend-git-master-mats-team.vercel.app/getWeekInfo', {
       name: 'Mat Longinow',
       week: {
         beginning: activeDates.beginning,

@@ -11,7 +11,7 @@ const Sidebar = ({ setActiveDates }: SidebarProps) => {
     const [weekDates, setWeekDates] = useState<any>()
 
     useEffect(() => {
-        axios.post('http://localhost:5010/getWeekDates', {
+        axios.post('https://food-logger-backend-git-master-mats-team.vercel.app/getWeekDates', {
             name: 'Mat Longinow',
         }).then((res) => {
             setWeekDates(res.data)
