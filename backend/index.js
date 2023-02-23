@@ -3,7 +3,7 @@ const index = express();
 const port = 5010;
 const cors = require('cors');
 const bodyParser = require('body-parser');
-import { add, format } from "date-fns";
+const { add, format } = require( "date-fns");
 
 index.use(bodyParser.json());
 index.use(bodyParser.urlencoded({ extended: false }));
