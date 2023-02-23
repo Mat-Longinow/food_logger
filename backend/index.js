@@ -16,7 +16,13 @@ mongoose.connect(
 	{ useUnifiedTopology: true, useNewUrlParser: true }
 );
 
-index.use(cors());
+const corsOptions = {
+	"origin": "*",
+	"methods": "GET, HEAD, PUT, PATCH, POST, DELETE",
+	// other options
+}
+
+index.use(cors(corsOptions));
 
 const db = mongoose.connection;
 
