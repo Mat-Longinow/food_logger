@@ -16,6 +16,7 @@ const FoodItem = ({record}: FoodItemProps) => {
 		sodium
 	} = record
 
+	// https://icons8.com/icon/19020/pancake is where I am pulling icons from
 	const getIconPath = (name: string) => {
 		return `icons/${name}.png`
 	}
